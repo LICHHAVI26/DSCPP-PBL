@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#b91c1c">
+    <title>PulsePath v2.0 | Emergency Dispatch System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+    <!-- ========================================================= -->
+    <!-- 1. LOGIN VIEW                                              -->
+    <!-- ========================================================= -->
+    <div id="login-view" class="login-wrapper">
+        <div class="login-card">
+            <!-- Branding -->
+            <div class="brand brand-center">
+                <span class="brand-mark">+</span>
+                <div>
+                    <strong>PulsePath</strong>
+                    <small>DISPATCH CONSOLE v2.0</small>
+                </div>
+            </div>
+
+            <div class="login-header">
+                <h2>Sign in to Dispatch</h2>
+                <p>Authorized emergency response personnel only.</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="login-form" autocomplete="on">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input
+                        type="text"
+                        id="login-username"
+                        name="username"
+                        placeholder="Enter username (e.g. admin)"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input
+                        type="password"
+                        id="login-password"
+                        name="password"
+                        placeholder="Enter password (e.g. 1234)"
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <!-- Error message container -->
+                <div id="login-error" class="error-box hidden" role="alert"></div>
+
+                <button type="submit" id="login-btn" class="primary-btn login-btn">
+                    <span>Sign In</span>
+                    <span>→</span>
+                </button>
+            </form>
+
+            <!-- Login Footer -->
+            <div class="login-footer">
+                <p>Emergency Dispatch System · Simulation Mode</p>
+                <small class="hint-credentials">Demo credentials: <strong>admin</strong> / <strong>1234</strong></small>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 2. DASHBOARD VIEW (Hidden by default)                     -->
+    <!-- ========================================================= -->
+    <div id="dashboard-view" class="app-layout hidden">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-mark">+</span>
+                <div>
+                    <strong>PulsePath</strong>
+                    <small>DISPATCH CONSOLE v2.0</small>
+                </div>
+            </div>
+
+            <div class="side-label">WORKSPACE</div>
+            <nav class="side-nav" aria-label="Main Navigation">
+                <a class="nav active" href="#overview" id="nav-overview">
+                    <span class="nav-icon">▦</span>
+                    <span>Overview</span>
+                </a>
+                <a class="nav" href="#request" id="nav-request">
+                    <span class="nav-icon">＋</span>
+                    <span>New Emergency</span>
+                </a>
+                <a class="nav" href="#fleet" id="nav-fleet">
+                    <span class="nav-icon">🚑</span>
+                    <span>Fleet Tracker</span>
+                </a>
+                <a class="nav" href="#live-tracking" id="nav-tracking">
+                    <span class="nav-icon">📍</span>
+                    <span>Live Tracking</span>
+                </a>
+                <a class="nav" href="#emergencies" id="nav-emergencies">
+                    <span class="nav-icon">⚡</span>
+                    <span>Active Emergencies</span>
+                </a>
+                <a class="nav" href="#network-map" id="nav-map">
+                    <span class="nav-icon">🗺️</span>
+                    <span>Network Map</span>
+                </a>
+                <a class="nav" href="#history" id="nav-history">
+                    <span class="nav-icon">⏱</span>
+                    <span>Dispatch History</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-simulation">
+                    <span class="pulse"></span>
+                    <div>
+                        <strong>Simulation mode</strong>
+                        <small>C++ DSA Engine Active</small>
+                    </div>
+                </div>
+
+                <button type="button" id="logout-btn" class="logout-link">
+                    <span class="logout-icon">⎋</span>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main">
+
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">EMERGENCY OPERATIONS</p>
+                    <h1>Dispatch dashboard</h1>
+                    <p class="subhead">Prioritize requests, track active fleet, monitor emergencies, and optimize routing.</p>
+                </div>
+                <div class="topbar-actions">
+                    <button type="button" id="theme-toggle-btn" class="theme-toggle" aria-label="Toggle Dark/Light Mode">
+                        <span id="theme-icon">🌙</span>
+                        <span id="theme-label">Dark Mode</span>
+                    </button>
+                    <div class="top-status">
+                        <span class="live-dot"></span>
+                        <span>System ready</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- STATS ROW (5 cards from /api/stats) -->
+            <section class="metrics" aria-label="System Metrics">
+                <article class="metric">
+                    <div class="metric-icon red">✚</div>
+                    <div class="metric-body">
+                        <span class="metric-label">Total Dispatches</span>
+                        <strong class="metric-value" id="stat-total">—</strong>
+                        <small class="metric-sub">Processed through DSA queue</small>
+                    </div>
+                </article>
+
+                <article class="metric">
+                    <div class="metric-icon green-icon">⚡</div>
+                    <div class="metric-body">
+                        <span class="metric-label">Success Rate</span>
+                        <strong class="metric-value" id="stat-rate">—</strong>
+                        <small class="metric-sub">Ambulance &amp; hospital matched</small>
+                    </div>
+                </article>
+
+                <article class="metric">
+                    <div class="metric-icon blue-icon">📍</div>
+                    <div class="metric-body">
+                        <span class="metric-label">Avg Response Distance</span>
+                        <strong class="metric-value" id="stat-distance">—</strong>
+                        <small class="metric-sub">Dijkstra shortest path metric</small>
+                    </div>
+                </article>
+
+                <article class="metric">
+                    <div class="metric-icon orange-icon">🚨</div>
+                    <div class="metric-body">
+                        <span class="metric-label">Active Emergencies</span>
+                        <strong class="metric-value" id="stat-active">—</strong>
+                        <small class="metric-sub">Under active coordination</small>
+                    </div>
+                </article>
+
+                <article class="metric">
+                    <div class="metric-icon teal-icon">🚑</div>
+                    <div class="metric-body">
+                        <span class="metric-label">Available Ambulances</span>
+                        <strong class="metric-value" id="stat-available">—</strong>
+                        <small class="metric-sub">Ready for immediate dispatch</small>
+                    </div>
+                </article>
+            </section>
+
+            <!-- TWO-COLUMN GRID: FORM & RESULTS -->
+            <div class="content-grid" id="overview">
+
+                <!-- LEFT COLUMN: DISPATCH FORM -->
+                <section class="panel request-panel" id="request">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">NEW REQUEST</p>
+                            <h2>Patient information</h2>
+                        </div>
+                        <span class="step-tag">STEP 01</span>
+                    </div>
+
+                    <form id="dispatch-form" autocomplete="off">
+                        <div class="form-group">
+                            <label for="patientName">Patient name</label>
+                            <input
+                                id="patientName"
+                                name="patientName"
+                                type="text"
+                                placeholder="Enter patient name"
+                                maxlength="80"
+                                autocomplete="name"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patientPhone">Patient mobile number</label>
+                            <input
+                                id="patientPhone"
+                                name="patientPhone"
+                                type="tel"
+                                placeholder="e.g. 9876543210"
+                                inputmode="tel"
+                                autocomplete="tel"
+                                pattern="[+]?[0-9]{10,15}"
+                                maxlength="16"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Patient location <span class="hint">9-Node Dijkstra Network</span></label>
+                            <select id="location" name="location" required>
+                                <option value="0">Location 0 (Central HQ)</option>
+                                <option value="1">Location 1 (North District)</option>
+                                <option value="2">Location 2 (East District)</option>
+                                <option value="3">Location 3 (South District)</option>
+                                <option value="4">Location 4 (West District)</option>
+                                <option value="5">Location 5 (Zone 5)</option>
+                                <option value="6">Location 6 (Zone 6 / City Hospital)</option>
+                                <option value="7">Location 7 (Zone 7 / General Hospital)</option>
+                                <option value="8">Location 8 (Zone 8 / Small Clinic)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emergency">Emergency description</label>
+                            <input
+                                id="emergency"
+                                name="emergency"
+                                type="text"
+                                placeholder="e.g. Cardiac arrest, breathing difficulty"
+                                maxlength="160"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label>Severity level</label>
+                            <div class="severity-options">
+                                <label class="severity-option">
+                                    <input type="radio" name="severity" value="1">
+                                    <span class="severity-dot low"></span>
+                                    <span>Low (1)</span>
+                                </label>
+                                <label class="severity-option">
+                                    <input type="radio" name="severity" value="2">
+                                    <span class="severity-dot medium"></span>
+                                    <span>Medium (2)</span>
+                                </label>
+                                <label class="severity-option">
+                                    <input type="radio" name="severity" value="3">
+                                    <span class="severity-dot high"></span>
+                                    <span>High (3)</span>
+                                </label>
+                                <label class="severity-option selected">
+                                    <input type="radio" name="severity" value="4" checked>
+                                    <span class="severity-dot critical"></span>
+                                    <span>Critical (4)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button class="primary-btn" type="submit" id="dispatch-submit-btn">
+                            <span id="dispatch-btn-text">Dispatch ambulance</span>
+                            <span>→</span>
+                        </button>
+
+                        <p class="form-note">Simulation Mode: Location nodes, driver responses, and hospital bed capacities are evaluated dynamically by the C++ engine.</p>
+                    </form>
+                </section>
+
+                <!-- RIGHT COLUMN: RESULTS PANEL -->
+                <section class="panel result-panel" id="results-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">DISPATCH RESULTS</p>
+                            <h2>Assignment overview</h2>
+                        </div>
+                        <span class="step-tag" id="out-emergency-id-tag">STEP 02–05</span>
+                    </div>
+
+                    <!-- EMPTY STATE -->
+                    <div id="empty-state" class="empty-state">
+                        <div class="empty-symbol">＋</div>
+                        <h3>Ready for an emergency</h3>
+                        <p>Submit the patient form to run the C++ dispatch logic and display the selected ambulance and hospital.</p>
+                    </div>
+
+                    <!-- RESULTS CONTENT -->
+                    <div id="results" class="results-container hidden">
+                        <div class="success-banner" id="success-banner">
+                            <span class="success-check">✓</span>
+                            <div>
+                                <strong id="result-title">Ambulance assigned successfully</strong>
+                                <small id="result-subtitle">Results returned by C++ backend</small>
+                            </div>
+                        </div>
+
+                        <div class="result-block">
+                            <div class="result-label-row">
+                                <span class="result-label">PATIENT</span>
+                                <span class="emergency-badge-tag" id="out-emergency-id">Emergency #—</span>
+                            </div>
+                            <div class="result-value" id="out-patient">—</div>
+                            <div class="result-secondary" id="out-emergency">—</div>
+                            <div class="result-secondary" id="out-phone">—</div>
+                            <div class="call-btn-wrapper">
+                                <a id="call-patient" class="call-btn hidden" href="#" role="button">
+                                    <span>📞</span>
+                                    <span>Call Patient</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="result-block">
+                            <div class="result-label">ASSIGNED AMBULANCE</div>
+                            <div class="ambulance-result">
+                                <div class="ambulance-icon">🚑</div>
+                                <div class="ambulance-info">
+                                    <div class="result-value" id="out-ambulance">—</div>
+                                    <div class="result-secondary" id="out-distance">—</div>
+                                </div>
+                                <span class="status-pill" id="out-status">Assigned</span>
+                            </div>
+                        </div>
+
+                        <div class="result-block">
+                            <div class="result-label">SELECTED HOSPITAL</div>
+                            <div class="hospital-result">
+                                <div class="hospital-icon">🏥</div>
+                                <div class="hospital-info">
+                                    <div class="result-value" id="out-hospital">—</div>
+                                    <div class="result-secondary" id="out-beds">—</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-block">
+                            <div class="result-label">FOUR NEAREST AVAILABLE AMBULANCES</div>
+                            <div id="candidate-list" class="candidate-list"></div>
+                        </div>
+
+                        <div class="logic-note">
+                            <strong>DSA logic executed</strong>
+                            <p id="out-logic">Priority Queue ranked severity; Dijkstra calculated sample-network distances; nearest-four selection filtered unavailable ambulances; DispatchManager applied acceptance and distance-tolerance rules; HospitalSelector checked facilities and available beds.</p>
+                        </div>
+                    </div>
+
+                    <!-- ERROR BOX -->
+                    <div id="error-box" class="error-box hidden" role="alert"></div>
+                </section>
+            </div>
+
+            <!-- ========================================================= -->
+            <!-- 3. FLEET TRACKER SECTION (Full Width)                     -->
+            <!-- ========================================================= -->
+            <section class="panel fleet-panel" id="fleet">
+                <div class="panel-heading">
+                    <div>
+                        <div class="heading-with-badge">
+                            <p class="eyebrow">FLEET MANAGEMENT</p>
+                            <span class="refresh-pill">
+                                <span class="pulse-dot"></span>
+                                <span class="refresh-text">Live auto-refresh (5s)</span>
+                            </span>
+                        </div>
+                        <h2>Fleet Tracker</h2>
+                    </div>
+                    <div class="panel-actions">
+                        <button type="button" id="reset-fleet-btn" class="secondary-btn warning-action" title="Reset all ambulances and active emergencies to default demo state">
+                            <span>↺</span> Reset Fleet
+                        </button>
+                    </div>
+                </div>
+
+                <div class="fleet-grid" id="fleet-grid">
+                    <!-- Populated dynamically by app.js from /api/ambulances -->
+                    <div class="loading-placeholder">Loading fleet data…</div>
+                </div>
+            </section>
+
+            <!-- ========================================================= -->
+            <!-- 3.5 LIVE TRACKING SECTION (Full Width)                    -->
+            <!-- ========================================================= -->
+            <section class="panel tracking-panel" id="live-tracking">
+                <div class="panel-heading">
+                    <div>
+                        <div class="heading-with-badge">
+                            <p class="eyebrow">REAL-TIME TRACKING</p>
+                            <span class="refresh-pill tracking-pulse">
+                                <span class="pulse-dot red-pulse"></span>
+                                <span class="refresh-text">LIVE — updates every 2s</span>
+                            </span>
+                        </div>
+                        <h2>🔴 Live Ambulance Tracking</h2>
+                    </div>
+                </div>
+
+                <div id="tracking-cards">
+                    <div id="tracking-empty" class="tracking-empty">
+                        <div class="empty-icon">📍</div>
+                        <p>No ambulances currently in transit.</p>
+                        <small>Dispatch an emergency to see live tracking with distance, ETA, and position.</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================= -->
+            <!-- 4. ACTIVE EMERGENCIES SECTION (Full Width)                -->
+            <!-- ========================================================= -->
+            <section class="panel emergencies-panel" id="emergencies">
+                <div class="panel-heading">
+                    <div>
+                        <div class="heading-with-badge">
+                            <p class="eyebrow">REAL-TIME MONITORING</p>
+                            <span class="count-badge" id="active-emergencies-count">0 Active</span>
+                        </div>
+                        <h2>Active Emergencies</h2>
+                    </div>
+                </div>
+
+                <div class="emergencies-list" id="emergencies-list">
+                    <!-- Populated dynamically by app.js from /api/emergencies -->
+                </div>
+
+                <div id="emergencies-empty" class="history-empty">
+                    <div class="empty-icon">🚨</div>
+                    <p>No active emergencies currently underway.</p>
+                    <small>Dispatched emergencies will appear here with dynamic status progression and vertical timelines.</small>
+                </div>
+            </section>
+
+            <!-- ========================================================= -->
+            <!-- 5. SVG ROUTE NETWORK MAP SECTION (Full Width)             -->
+            <!-- ========================================================= -->
+            <section class="panel map-panel" id="network-map">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">TOPOLOGY &amp; ROUTING</p>
+                        <h2>Route Network Map</h2>
+                    </div>
+                    <div class="map-legend">
+                        <span class="legend-item"><span class="legend-dot central"></span> Central HQ</span>
+                        <span class="legend-item"><span class="legend-dot district"></span> Districts</span>
+                        <span class="legend-item"><span class="legend-dot hospital"></span> Hospitals</span>
+                        <span class="legend-item">🚑 Ambulance</span>
+                    </div>
+                </div>
+
+                <div class="map-card">
+                    <div class="map-container" id="map-container">
+                        <!-- SVG Map dynamically rendered & updated by renderMap() in app.js -->
+                    </div>
+                    <div class="map-caption">
+                        <strong>Dijkstra Shortest Path Graph:</strong> 9 nodes with weighted bidirectional edges connected to Central HQ (Node 0). Ambulances and hospitals are tracked live on their assigned nodes.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================= -->
+            <!-- 6. HISTORY SECTION (Full Width)                           -->
+            <!-- ========================================================= -->
+            <section class="panel history-panel" id="history">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">AUDIT &amp; RECORDS</p>
+                        <h2>Dispatch history</h2>
+                    </div>
+                    <button type="button" id="refresh-history-btn" class="secondary-btn">
+                        <span>↻</span> Refresh
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="history-table" id="history-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Time</th>
+                                <th>Patient</th>
+                                <th>Emergency</th>
+                                <th>Severity</th>
+                                <th>Ambulance</th>
+                                <th>Hospital</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                            <!-- Populated dynamically by app.js from /api/history -->
+                        </tbody>
+                    </table>
+
+                    <div id="history-empty" class="history-empty hidden">
+                        <div class="empty-icon">📋</div>
+                        <p>No dispatch records found in the system log.</p>
+                        <small>Submitted dispatches will appear here automatically.</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================= -->
+            <!-- 7. FOOTER                                                 -->
+            <!-- ========================================================= -->
+            <footer class="dashboard-footer">
+                <p>PulsePath v2.0 · C++ POSIX Dispatch Engine · Priority Queue, Dijkstra Routing &amp; Hospital Matcher · Simulation Mode</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Application Script -->
+    <script src="/app.js"></script>
+</body>
+</html>
