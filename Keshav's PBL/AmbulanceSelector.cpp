@@ -37,7 +37,7 @@ AmbulanceSelector::findNearestFour(
         candidates.end(),
         [](const AmbulanceCandidate& a,
            const AmbulanceCandidate& b) {
-            return a.distance < b.distance;
+            return a.distance < b.distance
         }
     );
 
