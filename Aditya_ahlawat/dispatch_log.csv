@@ -1,0 +1,7 @@
+id,timestamp,patientName,phone,location,emergency,severity,ambulanceId,ambulanceDistance,hospitalName,hospitalDistance,status
+1,"2026-10-17 20:43:55","KESHAV","9149186300",6,"Massive road accident","Critical",2,8,"City Hospital",0,"Assigned"
+2,"2026-10-17 20:45:03","NEEL","9410367897",3,"Heart broke","Low",-1,-1,"City Hospital",11,"Pending"
+3,"2026-10-17 20:46:25","LICHHAVI","8576543213",1,"Accident from Scooty","Medium",-1,-1,"City Hospital",7,"Pending"
+4,"2026-10-17 21:02:20","vidit","8054678945",7,"Full form stair","High",2,10,"General Hospital",0,"Assigned"
+5,"2026-10-17 21:33:40","Sehar","8054748492",6,"bus fall in khai","High",2,8,"City Hospital",0,"Assigned"
+6,"2026-10-17 21:39:54","Arnav","9875476892",4,"heart attack","Critical",4,0,"City Hospital",13,"Assigned"
