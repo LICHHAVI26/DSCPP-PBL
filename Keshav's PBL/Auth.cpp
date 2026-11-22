@@ -250,7 +250,7 @@ bool updateDriverApproval(int driverId, bool approve) {
 
     if (!saveDrivers()) {
         registeredDrivers[index] = oldDriver;
-        return false;
+        return false
     }
 
     return true;
