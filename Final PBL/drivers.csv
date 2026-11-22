@@ -1,0 +1,2 @@
+id,name,licenseNumber,licenseVerified,rating,phone,passwordHash,ambulanceId,currentLocation,approved,isAvailable,rejected
+1,"kukur","UP-12ndnjnusaxajhsb",0,0,"9567383783","cea9635da754d29436010dfab5b241c7a3be1de906e2685a611b896eb3639acc",-1,0,1,0,0
